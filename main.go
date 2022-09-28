@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"net/http"
 	"os/exec"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/esirk/dokku_agent/models"
 )
@@ -44,12 +46,18 @@ func getApps(w http.ResponseWriter, r *http.Request) {
 				appReport[strings.TrimSpace(parts[0])] = strings.TrimSpace(parts[1])
 			}
 		}
+		timestamp, err := strconv.ParseInt(appReport["Created at"], 0, 64)
+		
+		if err != nil {
+			fmt.Println("Error: ", err)
+		}
+		createdAt := time.Unix((timestamp), 0)
 		// Create app object
 		resp["apps"] = append(resp["apps"], models.DokkuApp{
 			Name:      app,
-			GitUrl:    "github"+app,
+			GitUrl:    "https://github.com/"+app,
 			GitBranch: "master",
-			CreatedAt: appReport["App created at"],
+			CreatedAt: createdAt.Format(time.RFC1123),
 			Status:    "running",
 			Details: appReport,
 		})
