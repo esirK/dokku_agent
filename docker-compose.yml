@@ -1,0 +1,14 @@
+services:
+  app:
+    image: my_dokku_image
+    build:
+      context: .
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - .:/app
+    ports:
+      - "8080:8080"
+      - "3022:22"
+
+    tty: true
+    stdin_open: true
